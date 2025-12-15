@@ -8,7 +8,7 @@ A BOSH release for [Caddy Server](https://caddyserver.com/) v2 with Google Cloud
 - **Automatic HTTPS**: Let's Encrypt integration with DNS challenge support
 - **BPM Process Management**: Uses BOSH Process Manager for isolation and resource limits
 - **Persistent Certificate Storage**: Certificates stored on persistent disk
-- **Flexible Configuration**: Raw Caddyfile passthrough with ERB templating for secrets
+- **Flexible Configuration**: Raw Caddyfile passthrough with ERB templating for variables and secrets
 
 ## Included DNS Provider Modules
 
@@ -18,7 +18,7 @@ This release includes the following DNS provider module:
 
 ## Requirements
 
-- BOSH CLI v2+
+- BOSH CLI
 - BPM release (colocated with Caddy job)
 - Internet connectivity on compilation VMs (for downloading Go and Caddy modules during package compilation)
 - Persistent disk for certificate storage
@@ -146,8 +146,7 @@ This release compiles Caddy during package build time (when you run `bosh create
 
 - Downloads Go
 - Installs xcaddy
-- Builds Caddy v2 with all DNS provider modules
-- Takes approximately 2-5 minutes
+- Builds Caddy with all DNS provider modules
 
 BOSH caches compiled packages, so recompilation only happens when package contents change.
 
@@ -171,10 +170,6 @@ See `manifests/caddy.yml` for a complete example. Key points:
 - Check compilation logs: `bosh task <task-id> --debug`
 - Verify internet connectivity to proxy.golang.org
 
-**Out of Memory During Compilation**:
-- Increase compilation VM resources in cloud config
-- Default 2GB should be sufficient
-
 ### Runtime Issues
 
 **Certificate Acquisition Fails**:
@@ -185,7 +180,6 @@ See `manifests/caddy.yml` for a complete example. Key points:
 **Validation Fails on Deploy**:
 - Check Caddyfile syntax
 - Ensure ERB variables are properly interpolated
-- SSH to instance and test: `just validate`
 
 **Port Binding Fails**:
 - Verify security groups allow ports 80 and 443
@@ -248,8 +242,8 @@ bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy validate --config
 
 ### Packages
 
-- **golang**: Downloads and installs Go 1.21.13 toolchain for compilation
-- **caddy**: Compiles Caddy v2.10.2 with Google Cloud DNS provider module using xcaddy
+- **golang**: Downloads and installs Go toolchain for compilation
+- **caddy**: Compiles Caddy with Google Cloud DNS provider module using xcaddy
 
 ### Jobs
 
@@ -257,8 +251,6 @@ bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy validate --config
 
 ### BPM Configuration
 
-- **Process Isolation**: Caddy runs in isolated namespace
-- **Resource Limits**: 2GB memory, 8192 file descriptors, 100 processes
 - **Capabilities**: NET_BIND_SERVICE (bind to ports 80/443)
 - **Persistent Disk**: Mounted at `/var/vcap/store/caddy` for certificates
 - **Ephemeral Disk**: Mounted at `/var/vcap/data/caddy` for temporary data
