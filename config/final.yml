@@ -1,0 +1,5 @@
+name: caddy
+blobstore:
+  provider: gcs
+  options:
+    bucket_name: caddy-bosh-release-blobs

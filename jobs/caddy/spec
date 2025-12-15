@@ -1,0 +1,37 @@
+---
+name: caddy
+
+templates:
+  bin/pre-start.erb: bin/pre-start
+  config/bpm.yml.erb: config/bpm.yml
+  config/Caddyfile.erb: config/Caddyfile
+  config/gcp_credentials.json.erb: config/gcp_credentials.json
+
+packages:
+  - caddy
+
+properties:
+  caddyfile:
+    description: "Raw Caddyfile configuration content. Supports ERB templating for variable interpolation."
+    example: |
+      {
+        # Use staging CA for testing to avoid rate limits. Comment out for production.
+        acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+        email admin@example.com
+      }
+      
+      example.com {
+        tls {
+          dns googleclouddns {
+            gcp_project {env.GCP_PROJECT}
+          }
+        }
+        
+        reverse_proxy backend1:8080 backend2:8080
+      }
+  env:
+    description: "Additional environment variables to configure DNS providers and other settings."
+    default: {}
+    example:
+      GCP_PROJECT: my-project
+      GOOGLE_APPLICATION_CREDENTIALS: '{"type": "service_account", ...}'

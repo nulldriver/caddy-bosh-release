@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -eu
+
+# # Create directories for Caddy data
+# mkdir -p /var/vcap/store/caddy
+# mkdir -p /var/vcap/sys/log/caddy
+
+# # Set proper ownership
+# chown -R vcap:vcap /var/vcap/store/caddy
+# chown -R vcap:vcap /var/vcap/sys/log/caddy
+
+# Validate Caddyfile configuration
+echo "Validating Caddyfile configuration..."
+if ! /var/vcap/packages/caddy/bin/caddy validate --config /var/vcap/jobs/caddy/config/Caddyfile --adapter caddyfile; then
+  echo "ERROR: Caddyfile validation failed"
+  exit 1
+fi
+
+echo "Caddyfile validation successful"
+exit 0

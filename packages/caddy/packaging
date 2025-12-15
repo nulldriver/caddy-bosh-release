@@ -1,0 +1,60 @@
+#!/bin/bash
+
+set -eux
+
+# Configuration
+CADDY_VERSION="v2.10.2"
+
+# DNS Provider Modules - curated list of common providers
+CADDY_MODULES=(
+  "github.com/caddy-dns/googleclouddns"
+)
+
+# Debug: Check BOSH environment variables
+echo "BOSH_PACKAGES_DIR: ${BOSH_PACKAGES_DIR:-not set}"
+echo "BOSH_INSTALL_TARGET: ${BOSH_INSTALL_TARGET:-not set}"
+
+# Set up Go environment
+BOSH_PACKAGES_DIR="${BOSH_PACKAGES_DIR:-/var/vcap/packages}"
+export GOROOT="${BOSH_PACKAGES_DIR}/golang"
+export GOPATH="${BOSH_INSTALL_TARGET}"
+export PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"
+export GOPROXY="https://proxy.golang.org,direct"
+export GO111MODULE="on"
+export CGO_ENABLED=0
+export HOME="/tmp"
+export GOCACHE="/tmp/gocache"
+export GOMODCACHE="${GOPATH}/pkg/mod"
+
+echo "Go version:"
+go version
+
+echo "Installing xcaddy..."
+go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+
+# Build xcaddy command with all modules
+XCADDY_CMD="xcaddy build ${CADDY_VERSION}"
+for module in "${CADDY_MODULES[@]}"; do
+  XCADDY_CMD="${XCADDY_CMD} --with ${module}"
+done
+
+echo "Building Caddy ${CADDY_VERSION} with modules:"
+for module in "${CADDY_MODULES[@]}"; do
+  echo "  - ${module}"
+done
+
+# Build Caddy
+eval "${XCADDY_CMD}"
+
+# Install binary
+mkdir -p "${BOSH_INSTALL_TARGET}/bin"
+mv caddy "${BOSH_INSTALL_TARGET}/bin/caddy"
+chmod +x "${BOSH_INSTALL_TARGET}/bin/caddy"
+
+# Verify installation
+echo "Caddy installed successfully:"
+"${BOSH_INSTALL_TARGET}/bin/caddy" version
+
+# List installed modules
+echo "Installed modules:"
+"${BOSH_INSTALL_TARGET}/bin/caddy" list-modules | grep dns.providers || true

@@ -1,0 +1,49 @@
+<%=
+require 'yaml'
+
+config = {
+  "processes" => [{
+    "name" => "caddy",
+    "executable" => "/var/vcap/packages/caddy/bin/caddy",
+    "args" => [
+      "run",
+      "--config", "/var/vcap/jobs/caddy/config/Caddyfile",
+      "--adapter", "caddyfile"
+    ],
+    "env" => {
+      "XDG_DATA_HOME" => "/var/vcap/store"
+    },
+    "workdir" => "/var/vcap/jobs/caddy",
+    "limits" => {
+      "memory" => "2G",
+      "open_files" => 8192,
+      "processes" => 100
+    },
+    "ephemeral_disk" => true,
+    "persistent_disk" => true,
+    "capabilities" => [
+      "NET_BIND_SERVICE"
+    ],
+    "hooks" => {
+      "pre_start" => "/var/vcap/jobs/caddy/bin/pre-start"
+    },
+    "shutdown_signal" => "TERM"
+  }]
+}
+
+# add environment variables if provided
+if_p('env') do |env_vars|
+  # config["processes"][0]["env"] = {}
+  env_vars.each do |key, value|
+    if key == "GOOGLE_APPLICATION_CREDENTIALS"
+      # Overwrite with path to credentials file
+      config["processes"][0]["env"][key] = "/var/vcap/jobs/caddy/config/gcp_credentials.json"
+    else
+      config["processes"][0]["env"][key] = value
+    end
+  end
+end
+
+# Output the BPM configuration as YAML
+YAML.dump(config)
+%>

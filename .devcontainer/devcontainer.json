@@ -1,0 +1,12 @@
+{
+	"name": "Caddy BOSH Release",
+	"image": "mcr.microsoft.com/devcontainers/base:noble",
+	"features": {
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "1.25"
+		},
+		"ghcr.io/guiyomh/features/just:0.1.0": {},
+		"ghcr.io/nulldriver/devcontainer-features/bosh-cli:1": {},
+		"ghcr.io/dhoeric/features/google-cloud-cli:1": {}
+	}
+}

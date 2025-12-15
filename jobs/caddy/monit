@@ -1,0 +1,5 @@
+check process caddy
+  with pidfile /var/vcap/sys/run/bpm/caddy/caddy.pid
+  start program "/var/vcap/jobs/bpm/bin/bpm start caddy"
+  stop program "/var/vcap/jobs/bpm/bin/bpm stop caddy"
+  group vcap

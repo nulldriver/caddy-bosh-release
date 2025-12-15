@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -eux
+
+# Determine Go version
+GO_VERSION="1.25.5"
+GO_TARBALL="go${GO_VERSION}.linux-amd64.tar.gz"
+GO_URL="https://go.dev/dl/${GO_TARBALL}"
+
+echo "Downloading Go ${GO_VERSION}..."
+wget -q "${GO_URL}" -O "/tmp/${GO_TARBALL}"
+
+echo "Extracting Go..."
+tar -C "${BOSH_INSTALL_TARGET}" -xzf "/tmp/${GO_TARBALL}" --strip-components=1
+
+echo "Go installation complete"
+"${BOSH_INSTALL_TARGET}/bin/go" version

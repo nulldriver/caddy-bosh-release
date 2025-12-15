@@ -1,0 +1,53 @@
+---
+name: caddy
+
+releases:
+  - name: bpm
+    version: latest
+  - name: caddy
+    version: latest
+
+stemcells:
+  - alias: default
+    os: ubuntu-jammy
+    version: latest
+
+instance_groups:
+  - name: caddy
+    azs: [z1]
+    instances: 1
+    vm_type: default
+    stemcell: default
+    persistent_disk: 10240
+    networks:
+      - name: ((network_name))
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: caddy
+        release: caddy
+        properties:
+          env:
+            GCP_PROJECT: ((gcp_project))
+            GOOGLE_APPLICATION_CREDENTIALS: ((google_application_credentials))
+          caddyfile: |
+            {
+              # Use staging CA for testing to avoid rate limits. Comment out for production.
+              acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+              email ((email))
+            }
+
+            example.com {
+              tls {
+                dns googleclouddns {
+                  gcp_project {env.GCP_PROJECT}
+                }
+              }
+              reverse_proxy localhost:8080
+            }
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 30000-300000
+  update_watch_time: 30000-300000
