@@ -1,7 +1,22 @@
 # Example variables file for caddy deployment
 
-# ACME email address for Let's Encrypt notifications
-email: admin@example.com
+deployment_name: caddy
+vm_type: small
+persistent_disk: 10240
+
+caddyfile: |
+  {
+    email admin@example.com
+  }
+
+  example.com {
+    tls {
+      dns googleclouddns {
+        gcp_project {env.GCP_PROJECT}
+      }
+    }
+    respond "Hello from Caddy BOSH Release!"
+  }
 
 # Google Cloud DNS Provider configuration
 gcp_project: your-gcp-project-id
