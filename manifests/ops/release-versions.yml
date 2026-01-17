@@ -1,0 +1,16 @@
+# Set Caddy release version and URL
+---
+- type: replace
+  path: /releases/name=caddy
+  value:
+    name: caddy
+    version: ((caddy_version))
+    url: ((caddy_release_url))
+    sha1: ((caddy_sha1))
+- type: replace
+  path: /releases/name=bpm
+  value:
+    name: bpm
+    version: ((bpm_version))
+    url: ((bpm_release_url))
+    sha1: ((bpm_sha1))
