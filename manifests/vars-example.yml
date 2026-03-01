@@ -3,6 +3,7 @@
 deployment_name: caddy
 vm_type: small
 persistent_disk: 10240
+network_name: default
 
 caddyfile: |
   {

@@ -7,7 +7,7 @@ CADDY_VERSION="v2.10.2"
 
 # DNS Provider Modules - curated list of common providers
 CADDY_MODULES=(
-  "github.com/caddy-dns/googleclouddns"
+  "github.com/caddy-dns/googleclouddns@v1.1.0"
 )
 
 # Debug: Check BOSH environment variables
@@ -30,7 +30,7 @@ echo "Go version:"
 go version
 
 echo "Installing xcaddy..."
-go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+go install github.com/caddyserver/xcaddy/cmd/xcaddy@v0.4.5
 
 # Build xcaddy command with all modules
 XCADDY_CMD="xcaddy build ${CADDY_VERSION}"

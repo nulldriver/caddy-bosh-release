@@ -1,41 +1,39 @@
 # Caddy BOSH Release - Justfile
 # Run `just --list` to see available commands
 
+gcp_project := env_var("GCP_PROJECT")
+blobstore_bucket := "caddy-bosh-release-blobs"
+
 # Default recipe (shows help)
 default:
     @just --list
+
+# Install test dependencies and run job template unit tests
+test:
+    bundle config set --local path vendor/bundle
+    bundle install
+    bundle exec rspec
+
+# Run unit tests without reinstalling gems (faster)
+test-quick:
+    bundle exec rspec
+
+# Create the GCS blobstore bucket (one-time setup)
+create-bucket project=gcp_project:
+    gsutil mb -p {{project}} gs://{{blobstore_bucket}}
 
 # Create a dev release
 create-dev:
     bosh create-release --force --timestamp-version
 
-# Upload release to BOSH director
-upload:
-    bosh upload-release
+# Remove local dev release artifacts
+clean:
+    rm -rf dev_releases .dev_builds
 
-# Deploy Caddy with vars file
-deploy vars-file="vars.yml":
-    bosh -d caddy deploy manifests/caddy.yml --vars-file {{vars-file}}
+# Upload blobs to blobstore (required before creating a final release)
+upload-blobs:
+    bosh upload-blobs
 
-# Build and deploy in one step
-build-deploy vars-file="vars.yml": create-dev upload (deploy vars-file)
-
-# Follow Caddy logs
-logs:
-    bosh -d caddy logs caddy --follow
-
-# SSH to Caddy instance
-ssh:
-    bosh -d caddy ssh caddy
-
-# Validate Caddyfile on instance
-validate:
-    bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy validate --config /var/vcap/jobs/caddy/config/Caddyfile --adapter caddyfile"
-
-# Show Caddy version on instance
-version:
-    bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy version"
-
-# List Caddy modules on instance
-list-modules:
-    bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy list-modules"
+# Create a final release
+create-final:
+    bosh create-release --final

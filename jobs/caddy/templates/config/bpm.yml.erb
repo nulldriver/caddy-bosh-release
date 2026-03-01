@@ -33,7 +33,6 @@ config = {
 
 # add environment variables if provided
 if_p('env') do |env_vars|
-  # config["processes"][0]["env"] = {}
   env_vars.each do |key, value|
     if key == "GOOGLE_APPLICATION_CREDENTIALS"
       # Overwrite with path to credentials file

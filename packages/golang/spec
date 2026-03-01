@@ -3,4 +3,5 @@ name: golang
 
 dependencies: []
 
-files: []
+files:
+- golang/go1.25.5.linux-amd64.tar.gz

@@ -20,10 +20,10 @@ This release includes the following DNS provider module:
 
 - BOSH CLI
 - BPM release (colocated with Caddy job)
-- Internet connectivity on compilation VMs (for downloading Go and Caddy modules during package compilation)
+- Internet connectivity on compilation VMs (xcaddy and Caddy DNS modules are fetched from the internet at compile time)
 - Persistent disk for certificate storage
 
-**Note**: Offline/air-gapped deployments are not currently supported.
+**Note**: Offline/air-gapped deployments are not supported. The Go toolchain is vendored as a BOSH blob, but xcaddy and Caddy DNS modules are still fetched from `proxy.golang.org` during package compilation.
 
 ## Quick Start
 
@@ -69,12 +69,6 @@ Deploy:
 
 ```bash
 bosh -d caddy deploy manifests/caddy.yml --vars-file vars.yml
-```
-
-Or use justfile:
-
-```bash
-just deploy vars-file=vars.yml
 ```
 
 ## Configuration
@@ -144,9 +138,9 @@ properties:
 
 This release compiles Caddy during package build time (when you run `bosh create-release`). The compilation:
 
-- Downloads Go
-- Installs xcaddy
-- Builds Caddy with all DNS provider modules
+- Extracts the Go toolchain from a vendored BOSH blob (no internet required)
+- Installs xcaddy `v0.4.5` from `proxy.golang.org`
+- Builds Caddy with all DNS provider modules from `proxy.golang.org`
 
 BOSH caches compiled packages, so recompilation only happens when package contents change.
 
@@ -162,13 +156,12 @@ See `manifests/caddy.yml` for a complete example. Key points:
 
 ### Compilation Failures
 
-**Go Download Fails**:
-- Check internet connectivity on compilation VMs
-- Verify firewall rules allow HTTPS to go.dev
-
 **Module Build Fails**:
 - Check compilation logs: `bosh task <task-id> --debug`
-- Verify internet connectivity to proxy.golang.org
+- Verify internet connectivity on compilation VMs to `proxy.golang.org`
+
+**Go Tarball Integrity Check Fails**:
+- The local blob may be corrupt — re-add it: `bosh add-blob <path/to/tarball> golang/go1.25.5.linux-amd64.tar.gz`
 
 ### Runtime Issues
 
@@ -189,43 +182,29 @@ See `manifests/caddy.yml` for a complete example. Key points:
 
 ### Using justfile
 
+The justfile covers release development tasks only. Deployment and instance management use raw `bosh` commands (see below).
+
 ```bash
-# Create dev release
+# Create a dev release
 just create-dev
 
-# Upload release
-just upload
-
-# Deploy with vars file
-just deploy vars-file=vars.yml
-
-# View logs
-just logs
-
-# Validate configuration on instance
-just validate
-
-# Check Caddy version
-just version
-
-# List all modules
-just list-modules
-
-# Clean up
+# Remove local dev release artifacts
 just clean
 
-# Build and deploy in one command
-just build-deploy vars-file=vars.yml
+# Upload blobs to blobstore (required before a final release)
+just upload-blobs
+
+# Create a final release
+just create-final
 ```
 
-### Manual Commands
+### Deployment Commands
 
 ```bash
-# Create dev release
-bosh create-release --force --timestamp-version
-
-# Upload and deploy
+# Upload release to BOSH director
 bosh upload-release
+
+# Deploy
 bosh -d caddy deploy manifests/caddy.yml --vars-file vars.yml
 
 # Check logs
@@ -234,15 +213,21 @@ bosh -d caddy logs caddy --follow
 # SSH to instance
 bosh -d caddy ssh caddy
 
-# Validate Caddyfile
+# Validate Caddyfile on instance
 bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy validate --config /var/vcap/jobs/caddy/config/Caddyfile --adapter caddyfile"
+
+# Check Caddy version on instance
+bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy version"
+
+# List Caddy modules on instance
+bosh -d caddy ssh caddy -c "/var/vcap/packages/caddy/bin/caddy list-modules"
 ```
 
 ## Architecture
 
 ### Packages
 
-- **golang**: Downloads and installs Go toolchain for compilation
+- **golang**: Extracts and installs Go toolchain from a vendored BOSH blob
 - **caddy**: Compiles Caddy with Google Cloud DNS provider module using xcaddy
 
 ### Jobs

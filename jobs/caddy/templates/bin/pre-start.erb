@@ -2,13 +2,7 @@
 
 set -eu
 
-# # Create directories for Caddy data
-# mkdir -p /var/vcap/store/caddy
-# mkdir -p /var/vcap/sys/log/caddy
-
-# # Set proper ownership
-# chown -R vcap:vcap /var/vcap/store/caddy
-# chown -R vcap:vcap /var/vcap/sys/log/caddy
+# BPM handles directory creation and ownership for persistent and ephemeral disks.
 
 # Validate Caddyfile configuration
 echo "Validating Caddyfile configuration..."

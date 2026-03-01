@@ -15,3 +15,7 @@ releases/**/*.tgz
 
 .env
 vars.yml
+
+# Ruby test dependencies
+vendor/bundle
+.bundle/

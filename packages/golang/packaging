@@ -2,16 +2,15 @@
 
 set -eux
 
-# Determine Go version
 GO_VERSION="1.25.5"
-GO_TARBALL="go${GO_VERSION}.linux-amd64.tar.gz"
-GO_URL="https://go.dev/dl/${GO_TARBALL}"
+GO_TARBALL="golang/go${GO_VERSION}.linux-amd64.tar.gz"
+GO_SHA256="9e9b755d63b36acf30c12a9a3fc379243714c1c6d3dd72861da637f336ebb35b"
 
-echo "Downloading Go ${GO_VERSION}..."
-wget -q "${GO_URL}" -O "/tmp/${GO_TARBALL}"
+echo "Verifying Go ${GO_VERSION} tarball integrity..."
+echo "${GO_SHA256}  ${GO_TARBALL}" | sha256sum -c -
 
-echo "Extracting Go..."
-tar -C "${BOSH_INSTALL_TARGET}" -xzf "/tmp/${GO_TARBALL}" --strip-components=1
+echo "Extracting Go ${GO_VERSION}..."
+tar -C "${BOSH_INSTALL_TARGET}" -xzf "${GO_TARBALL}" --strip-components=1
 
 echo "Go installation complete"
 "${BOSH_INSTALL_TARGET}/bin/go" version
