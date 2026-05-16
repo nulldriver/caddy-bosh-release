@@ -1,5 +1,18 @@
 # Copilot Instructions for Caddy BOSH Release
 
+## General Principles
+
+### Infrastructure as Code
+- All repeatable operations must be codified as `just` recipes in the justfile — never run one-off commands to perform tasks that could recur
+- When adding a new operational step, add it to the justfile first, then document it in the README
+- When a CLI tool is needed, add it as a dev container feature in `.devcontainer/devcontainer.json` — never install tools manually (e.g. via `apt-get` or `brew`)
+
+### Test Before Commit
+- Always test changes before committing
+- For justfile recipes: run the recipe and verify it succeeds before staging the file
+- For README or documentation changes: verify any commands shown are accurate
+- Do not commit and then fix — fix first, then commit
+
 ## Commit Message Format
 
 All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
