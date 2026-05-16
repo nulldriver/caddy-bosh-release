@@ -203,8 +203,11 @@ gcloud auth application-default login
 # Upload blobs to blobstore (required before a final release)
 just upload-blobs
 
-# Create a final release
-just create-final
+# Create a final release (use semantic versioning, e.g. 1.0.0)
+just create-final 1.0.0
+
+# Publish the final release as a GitHub release
+just publish
 ```
 
 ### Deployment Commands
