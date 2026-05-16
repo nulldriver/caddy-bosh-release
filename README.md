@@ -22,6 +22,7 @@ This release includes the following DNS provider module:
 - BPM release (colocated with Caddy job)
 - Internet connectivity on compilation VMs (xcaddy and Caddy DNS modules are fetched from the internet at compile time)
 - Persistent disk for certificate storage
+- Google Cloud SDK (`gcloud`) with Application Default Credentials for uploading blobs and creating final releases
 
 **Note**: Offline/air-gapped deployments are not supported. The Go toolchain is vendored as a BOSH blob, but xcaddy and Caddy DNS modules are still fetched from `proxy.golang.org` during package compilation.
 
@@ -195,6 +196,9 @@ just clean
 
 # Create a dev release
 just create-dev
+
+# Authenticate with GCP (required for uploading blobs and creating final releases)
+gcloud auth application-default login
 
 # Upload blobs to blobstore (required before a final release)
 just upload-blobs
