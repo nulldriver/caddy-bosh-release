@@ -1,0 +1,24 @@
+{
+  "features": {
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.3.4",
+      "resolved": "ghcr.io/devcontainers/features/go@sha256:d85e921f91b41340055bb12b325d9d551170ed04b3b832e33530bf42f167c032",
+      "integrity": "sha256:d85e921f91b41340055bb12b325d9d551170ed04b3b832e33530bf42f167c032"
+    },
+    "ghcr.io/dhoeric/features/google-cloud-cli:1": {
+      "version": "1.0.1",
+      "resolved": "ghcr.io/dhoeric/features/google-cloud-cli@sha256:fa5d894718825c5ad8009ac8f2c9f0cea3d1661eb108a9d465cba9f3fc48965f",
+      "integrity": "sha256:fa5d894718825c5ad8009ac8f2c9f0cea3d1661eb108a9d465cba9f3fc48965f"
+    },
+    "ghcr.io/guiyomh/features/just:0.1.0": {
+      "version": "0.1.0",
+      "resolved": "ghcr.io/guiyomh/features/just@sha256:8311dff976bd153a54a879021353a7e149963e580022b25af49c45cfc5f13bec",
+      "integrity": "sha256:8311dff976bd153a54a879021353a7e149963e580022b25af49c45cfc5f13bec"
+    },
+    "ghcr.io/nulldriver/devcontainer-features/bosh-cli:1": {
+      "version": "1.0.1",
+      "resolved": "ghcr.io/nulldriver/devcontainer-features/bosh-cli@sha256:d5517c01c4fc7208bba65f9e6a9fb4c04c44ccf7f61fe506eaa3273b4415b007",
+      "integrity": "sha256:d5517c01c4fc7208bba65f9e6a9fb4c04c44ccf7f61fe506eaa3273b4415b007"
+    }
+  }
+}
