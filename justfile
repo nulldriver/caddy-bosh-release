@@ -1,7 +1,7 @@
 # Caddy BOSH Release - Justfile
 # Run `just --list` to see available commands
 
-gcp_project := env_var("GCP_PROJECT")
+gcp_project := env_var_or_default("GCP_PROJECT", "")
 blobstore_bucket := "caddy-bosh-release-blobs"
 
 # Default recipe (shows help)

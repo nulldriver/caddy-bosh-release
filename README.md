@@ -39,6 +39,11 @@ Or use the justfile:
 just create-dev
 ```
 
+> **Tip**: If this fails with "Cannot find blob" errors, stale dev build artifacts may be cached. Clean them first:
+> ```bash
+> just clean
+> ```
+
 ### 2. Upload Release
 
 ```bash
