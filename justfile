@@ -52,4 +52,17 @@ publish:
         echo "Tarball $tarball not found. Regenerating..."
         bosh create-release "releases/caddy/caddy-${version}.yml" --tarball "$tarball"
     fi
-    gh release create "v${version}" "$tarball" --title "v${version}" --generate-notes
+    url="https://github.com/nulldriver/caddy-bosh-release/releases/download/v${version}/caddy-${version}.tgz"
+    sha1=$(sha256sum "$tarball" | awk '{print "sha256:" $1}')
+    gh release create "v${version}" "$tarball" \
+      --title "v${version}" \
+      --generate-notes \
+      --notes "## Usage
+
+\`\`\`yaml
+- name: caddy
+  version: \"${version}\"
+  url: \"${url}\"
+  sha1: ${sha1}
+\`\`\`
+"
