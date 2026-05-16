@@ -190,11 +190,11 @@ See `manifests/caddy.yml` for a complete example. Key points:
 The justfile covers release development tasks only. Deployment and instance management use raw `bosh` commands (see below).
 
 ```bash
-# Create a dev release
-just create-dev
-
 # Remove local dev release artifacts
 just clean
+
+# Create a dev release
+just create-dev
 
 # Upload blobs to blobstore (required before a final release)
 just upload-blobs
