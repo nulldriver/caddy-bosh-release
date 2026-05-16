@@ -32,10 +32,10 @@ The scope should specify what part of the codebase is affected. Examples:
 - `(spec)` - Test specifications
 
 ### Subject
-- Use imperative mood ("add" not "added" or "adds")
-- Do not capitalize the first letter
-- Do not end with a period
-- Limit to 50 characters
+1. Use imperative mood (e.g., "add" not "added" or "adds")
+2. Do not capitalize the first letter
+3. Do not end with a period
+4. Limit the subject line to 50 characters
 
 ### Body (Optional)
 - Separate from subject by a blank line
